@@ -1,6 +1,7 @@
 import 'package:favorite_places/models/places.dart';
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/providers/user_places.dart';
+import 'package:favorite_places/screens/places_detail/view/place_details.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,24 +60,31 @@ class PlacesListScreen extends ConsumerWidget {
               return ListView.builder(
                 itemCount: places.length,
                 itemBuilder: (ctx, index) => ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: FileImage(places[index].image),
+                  ),
                   title: Text(
                     places[index].title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
                     textAlign: TextAlign.left,
                   ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) =>
+                            PlaceDetailsScreen(place: places[index]),
+                      ),
+                    );
+                  },
                 ),
               );
             } else {
               return Center(
                 child: Text(
                   "NO PLACES ADDED",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
               );
             }

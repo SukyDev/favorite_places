@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:favorite_places/providers/user_places.dart';
 import 'package:favorite_places/screens/places/bloc/places_list_bloc.dart';
+import 'package:favorite_places/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,20 +25,20 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   String? _name;
   bool _isLoading = false;
   bool _isStateSaved = false;
+  File? _selectedImage;
 
   void _saveCurrentState() {
     _formKey.currentState!.save();
     final enteredText = _name;
 
-    if (enteredText == null || enteredText.isEmpty) {
+    if (enteredText == null || enteredText.isEmpty || _selectedImage == null) {
       return;
     }
 
-    ref.read(userPlacesProvider.notifier).addPlace(enteredText);
+    ref.read(userPlacesProvider.notifier).addPlace(enteredText, _selectedImage!);
   }
 
   void _returnToMainScreen() async {
-    Place place = Place(title: _name!);
     Navigator.of(context).pop();
   }
 
@@ -76,6 +79,10 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                     },
                   ),
                 ),
+                const SizedBox(height: 10,),
+                ImageInput(onPickImage: (image) {
+                  _selectedImage = image;
+                },),
                 const SizedBox(
                   height: 16,
                 ),
@@ -108,13 +115,13 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                                       );
                                   _isStateSaved = true;
                                 }
-                                if (_isStateSaved) {
+                                if (_isStateSaved && (_selectedImage != null)) {
                                   Future.delayed(const Duration(seconds: 1),
                                       () {
                                     context.read<AddPlaceBloc>().add(
                                           AddPlaceAddingFinished(
                                             isFinished: true,
-                                            place: Place(title: _name!),
+                                            place: Place(title: _name!, image: _selectedImage!),
                                           ),
                                         );
                                     _returnToMainScreen();
