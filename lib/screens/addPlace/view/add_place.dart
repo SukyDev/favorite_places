@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:favorite_places/providers/user_places.dart';
 import 'package:favorite_places/screens/places/bloc/places_list_bloc.dart';
 import 'package:favorite_places/widgets/image_input.dart';
+import 'package:favorite_places/widgets/location_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,16 +27,18 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   bool _isLoading = false;
   bool _isStateSaved = false;
   File? _selectedImage;
+  PlaceLocation? _placeLocation;
 
   void _saveCurrentState() {
     _formKey.currentState!.save();
     final enteredText = _name;
 
-    if (enteredText == null || enteredText.isEmpty || _selectedImage == null) {
+
+    if (enteredText == null || enteredText.isEmpty || _selectedImage == null || _placeLocation == null) {
       return;
     }
 
-    ref.read(userPlacesProvider.notifier).addPlace(enteredText, _selectedImage!);
+    ref.read(userPlacesProvider.notifier).addPlace(enteredText, _selectedImage!, _placeLocation!);
   }
 
   void _returnToMainScreen() async {
@@ -86,6 +89,12 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                 const SizedBox(
                   height: 16,
                 ),
+
+                LocationInput(onPickedLocation: (location) {
+                  _placeLocation = location;
+                  print('Adresa ${location.address}');
+                },),
+                const SizedBox(height: 10,),
                 SizedBox(
                     width: 130,
                     child: BlocListener<AddPlaceBloc, AddPlaceState>(
@@ -121,7 +130,7 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                                     context.read<AddPlaceBloc>().add(
                                           AddPlaceAddingFinished(
                                             isFinished: true,
-                                            place: Place(title: _name!, image: _selectedImage!),
+                                            place: Place(title: _name!, image: _selectedImage!, location: PlaceLocation(latitude: 0, longitude: 0, address: '')),
                                           ),
                                         );
                                     _returnToMainScreen();

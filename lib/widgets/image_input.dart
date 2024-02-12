@@ -18,11 +18,11 @@ class ImageInput extends StatefulWidget {
 
 class _ImageInputState extends State<ImageInput> {
   File? _selectedImage;
+  final _imagePicker = ImagePicker();
 
   void _takePicture() async {
-    final imagePicker = ImagePicker();
     final pickedImage =
-        await imagePicker.pickImage(source: ImageSource.camera, maxWidth: 600);
+        await _imagePicker.pickImage(source: ImageSource.camera, maxWidth: 600);
     if (pickedImage == null) {
       return;
     }
