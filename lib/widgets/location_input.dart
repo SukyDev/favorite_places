@@ -133,7 +133,7 @@ class _LocationInputState extends State<LocationInput> {
           onPicked: (pickedData) {
             print(pickedData.address);
             String street = pickedData.address['road'];
-            String houseNumber = pickedData.address['house_number'];
+            String houseNumber = pickedData.address['house_number'] ?? 'No number';
             String postCode = pickedData.address['postcode'];
             String city = pickedData.address['city'];
             String country = pickedData.address['country'];

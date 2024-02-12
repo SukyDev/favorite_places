@@ -9,7 +9,8 @@ class Place {
   final File image;
   final PlaceLocation location;
 
-  Place({required this.title, required this.image, required this.location}) : id = uuid.v4();
+  Place({required this.title, required this.image, required this.location, String? id})
+      : id = id ?? uuid.v4();
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -20,12 +21,15 @@ class Place {
   }
 
   factory Place.fromJson(Map<String, dynamic> json) {
-    return Place(title: json['title'], image: json['image'], location: json['location']);
+    return Place(
+        title: json['title'], image: json['image'], location: json['location']);
   }
 }
 
 class PlaceLocation {
-  const PlaceLocation({required this.latitude, required this.longitude, required this.address});
+  const PlaceLocation(
+      {required this.latitude, required this.longitude, required this.address});
+
   final double latitude;
   final double longitude;
   final String address;
@@ -39,6 +43,9 @@ class PlaceLocation {
   }
 
   factory PlaceLocation.fromJson(Map<String, dynamic> json) {
-    return PlaceLocation(latitude: json['latitude'], longitude: json['longitude'], address: json['address']);
+    return PlaceLocation(
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        address: json['address']);
   }
 }

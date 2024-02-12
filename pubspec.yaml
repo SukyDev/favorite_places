@@ -48,6 +48,9 @@ dependencies:
   geocoding: ^2.1.1
   flutter_map_location_marker: ^8.0.4
   open_street_map_search_and_pick: ^0.1.1
+  path_provider: ^2.1.2
+  path: ^1.8.3
+  sqflite: ^2.2.6
 
 dev_dependencies:
   flutter_test:

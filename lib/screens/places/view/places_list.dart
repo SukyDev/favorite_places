@@ -9,10 +9,26 @@ import 'package:favorite_places/screens/places/bloc/places_list_bloc.dart';
 import 'package:favorite_places/screens/addPlace/view/add_place.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PlacesListScreen extends ConsumerWidget {
+class PlacesListScreen extends ConsumerStatefulWidget {
   const PlacesListScreen({super.key});
 
-  // Places places = Places([]);
+  @override
+  ConsumerState<PlacesListScreen> createState() {
+    return _PlacesListScreenState();
+  }
+
+// Places places = Places([]);
+}
+
+class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
+  late Future<void> _placesFuture;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _placesFuture = ref.read(userPlacesProvider.notifier).loadPlaces();
+  }
 
   void _addPlace(BuildContext context) async {
     // final result = await Navigator.of(context).push<Place>(
@@ -33,7 +49,7 @@ class PlacesListScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final places = ref.watch(userPlacesProvider);
     return Scaffold(
       appBar: AppBar(
@@ -57,36 +73,52 @@ class PlacesListScreen extends ConsumerWidget {
           builder: (context, state) {
             print(state.places);
             if (places.isNotEmpty) {
-              return ListView.builder(
-                itemCount: places.length,
-                itemBuilder: (ctx, index) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 26,
-                      backgroundImage: FileImage(places[index].image),
-                    ),
-                    title: Text(
-                      places[index].title,
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
-                      textAlign: TextAlign.left,
-                    ),
-                    subtitle: Text(
-                      places[index].location.address,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) =>
-                              PlaceDetailsScreen(place: places[index]),
+              return FutureBuilder(
+                future: _placesFuture,
+                builder: (context, snapshot) => snapshot.connectionState ==
+                        ConnectionState.waiting
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: places.length,
+                        itemBuilder: (ctx, index) => Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 26,
+                              backgroundImage: FileImage(places[index].image),
+                            ),
+                            title: Text(
+                              places[index].title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                              textAlign: TextAlign.left,
+                            ),
+                            subtitle: Text(
+                              places[index].location.address,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) =>
+                                      PlaceDetailsScreen(place: places[index]),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
               );
             } else {
               return Center(
